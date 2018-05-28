@@ -1,0 +1,26 @@
+{
+    "name": "MyWheel",
+    "description": "Your project description",
+    "keywords": ["Your keyword", "Another keyword"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vadim Malkov",
+            "email": "your@email.com",
+            "role": "Creator / Main Developer"
+        }
+    ],
+    "require": {
+        "symfony/http-foundation": "^3.2",
+        "league/container": "^2.2",
+        "nikic/fast-route": "^1.0",
+        "filp/whoops": "~2.1",
+        "symfony/templating": "^3.2",
+        "gabordemooij/redbean": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "MyWheel\\": ""
+        }
+    }
+}
