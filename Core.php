@@ -14,7 +14,7 @@
 	 * например, Config $config->ini_section->ini_param будет содержать
 	 * значение параметра ini_param в секции ini_section файла конфига .ini
 	*/
-	final class Config {
+	class Config {
 
 		function __construct($configFile) {
 			$configFile = realpath($configFile);
@@ -120,7 +120,7 @@
 		$loader->addPsr4($appNamespace.'\\', __APP_PATH);
 
 		
-		$routeDefinitionCallback = function (\FastRoute\RouteCollector $r) {
+		$routeDefinitionCallback = function (\FastRoute\RouteCollector $r) use ($container) {
 			
 
 	    	$routes = include(__APP_PATH.DS.'Routes.php');

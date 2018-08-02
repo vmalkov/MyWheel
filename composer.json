@@ -14,9 +14,7 @@
         "symfony/http-foundation": "^3.2",
         "league/container": "^2.2",
         "nikic/fast-route": "^1.0",
-        "filp/whoops": "~2.1",
-        "symfony/templating": "^3.2",
-        "gabordemooij/redbean": "dev-master"
+        "filp/whoops": "~2.1"
     },
     "autoload": {
         "psr-4": {
