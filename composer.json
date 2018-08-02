@@ -1,12 +1,12 @@
 {
     "name": "MyWheel",
-    "description": "Your project description",
-    "keywords": ["Your keyword", "Another keyword"],
+    "description": "PHP frameworkless framework",
+    "keywords": ["frameworkless", "php", "framework"],
     "license": "MIT",
     "authors": [
         {
             "name": "Vadim Malkov",
-            "email": "your@email.com",
+            "email": "vumalkov@gmail.com",
             "role": "Creator / Main Developer"
         }
     ],
