@@ -15,16 +15,6 @@
 	 * значение параметра ini_param в секции ini_section файла конфига .ini
 	*/
 	class Config {
-
-		function __construct($configFile) {
-			$configFile = realpath($configFile);
-			
-			$this->loadConfig($configFile);
-			
-			if(!defined('__APP_PATH')) define ('__APP_PATH',  dirname($configFile));
-
-			
-		}
 		
 		private function makeObj($params) {
 			foreach($params as $k=>$param) if(empty($this->$k)) {$this->$k = (object)$param; }
@@ -41,8 +31,17 @@
 
 	}
 
-	interface Renderer {
-	    public function render($template, $data = []);
+	abstract class Renderer {
+		protected $engine;
+	    abstract public function render($template, $data = []);
+
+	    public function getEngine() {
+	        return $this->engine;
+	    }
+
+	    public function setEngine($engine) {
+	        $this->engine = $engine;
+	    }
 	}
 
 	//интерфейс контроллера
@@ -99,16 +98,25 @@
 		        new ReflectionContainer()
 		    );
 		
-		$container->share('Symfony\Component\HttpFoundation\Response');
-		$container->share('Symfony\Component\HttpFoundation\Request', function(){return Request::createFromGlobals();});
-		$container->share('MyWheel\Config',function() use ($configFile) {return new Config($configFile);});
-		
-		$request = $container->get('Symfony\Component\HttpFoundation\Request');
+		//$container->share('Container',$container);
+		$response = new Response;
 
-		$response = $container->get('Symfony\Component\HttpFoundation\Response');
+		$container->share('Symfony\Component\HttpFoundation\Response',$response);
+
+		$request = Request::createFromGlobals();
+
+		$container->share('Symfony\Component\HttpFoundation\Request',$request);
 
 		//это для определения __APP_PATH
-		$config = $container->get('MyWheel\Config');
+
+		define ('__APP_PATH',  dirname(realpath($configFile)));
+		$config = new Config();
+			
+		$config->loadConfig($configFile);
+
+		$container->share('MyWheel\Config',$config);
+
+		$container->share('League\Container\Container',$container);
 
 		/*$container->share('MyWheel\Registry',function() use ($request,$response,$config,$container){
 			return new Registry($request,$response,$config,$container);
@@ -127,13 +135,17 @@
 		    foreach ($routes as $route) {
 		        $r->addRoute($route[0], $route[1], $route[2]);
 		    }
-		    
+		    $container->share('FastRoute\RouteCollector',$r);
 
 		};
 
 		$dispatcher = \FastRoute\simpleDispatcher($routeDefinitionCallback);
 
+		$container->share('dispatcher', $dispatcher);
+
 		$routeInfo = $dispatcher->dispatch($request->getMethod(), $request->getPathInfo());
+
+		$container->share('routeInfo', $routeInfo);
 		
 		switch ($routeInfo[0]) {
 		    case \FastRoute\Dispatcher::NOT_FOUND:
@@ -153,7 +165,7 @@
 		        $routeParams = $routeInfo[2];
 		        // Obtain an instance of route's controller
 		        // Resolves constructor dependencies using the container
-		        $controller = $container->get($fqcn);
+		        $controller = $container->get($fqcn);//->addArgument($container);
 		        // Generate a response by invoking the appropriate route method in the controller
 		        $controller->$routeMethod($routeParams);
 			    break;
